@@ -7,6 +7,7 @@ using Microsoft.Extensions.Logging;
 using StickBot;
 using StickBot.CommandModules;
 using StickBot.Models;
+using StickBot.Services;
 
 #if DEBUG
 const string token = Credentials.DiscordToken;
@@ -16,13 +17,10 @@ const string token = Environment.GetEnvironmentVariable("DISCORD_TOKEN");
 
 var services = new ServiceCollection();
 
-#if DEBUG
-services.AddDbContext<BotDbContext>(options => options.UseSqlite("Data Source=stick.db"));
-#else
-// TODO: Some sort of PostgreSQL database
-#endif
+services.AddDbContext<BotDbContext>();
+services.AddScoped<SettingsService>();
 
-var discord = new DiscordClient(new DiscordConfiguration()
+var discord = new DiscordClient(new DiscordConfiguration
 {
     Token = token,
     TokenType = TokenType.Bot,
