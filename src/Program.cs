@@ -1,14 +1,25 @@
 ﻿using DSharpPlus;
 using DSharpPlus.Entities;
 using DSharpPlus.SlashCommands;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using StickBot;
 using StickBot.CommandModules;
+using StickBot.Models;
 
 #if DEBUG
 const string token = Credentials.DiscordToken;
 #else
 const string token = Environment.GetEnvironmentVariable("DISCORD_TOKEN");
+#endif
+
+var services = new ServiceCollection();
+
+#if DEBUG
+services.AddDbContext<BotDbContext>(options => options.UseSqlite("Data Source=stick.db"));
+#else
+// TODO: Some sort of PostgreSQL database
 #endif
 
 var discord = new DiscordClient(new DiscordConfiguration()
@@ -31,7 +42,10 @@ discord.GuildCreated += async (sender, eventArgs) =>
     // TODO: Welcome message
 };
 
-var slash = discord.UseSlashCommands();
+var slash = discord.UseSlashCommands(new SlashCommandsConfiguration
+{
+    Services = services.BuildServiceProvider()
+});
 
 #if DEBUG
 slash.RegisterCommands<StickCommands>(Credentials.TestServer);

@@ -1,4 +1,7 @@
-﻿namespace StickBot.CommandModules;
+﻿using DSharpPlus;
+using DSharpPlus.Entities;
+
+namespace StickBot.CommandModules;
 
 using DSharpPlus.SlashCommands;
 
