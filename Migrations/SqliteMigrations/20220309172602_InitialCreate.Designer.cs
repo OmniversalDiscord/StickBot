@@ -11,7 +11,7 @@ using StickBot.Models;
 namespace StickBot.Migrations.SqliteMigrations
 {
     [DbContext(typeof(BotDbContext))]
-    [Migration("20220308193705_InitialCreate")]
+    [Migration("20220309172602_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -37,13 +37,13 @@ namespace StickBot.Migrations.SqliteMigrations
                     b.Property<ulong>("ServerId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<float>("StealBonkChance")
+                    b.Property<double>("StealBonkChance")
                         .HasColumnType("REAL");
 
                     b.Property<long>("StealCooldown")
                         .HasColumnType("INTEGER");
 
-                    b.Property<float>("StealSuccessChance")
+                    b.Property<double>("StealSuccessChance")
                         .HasColumnType("REAL");
 
                     b.Property<ulong>("StickRole")

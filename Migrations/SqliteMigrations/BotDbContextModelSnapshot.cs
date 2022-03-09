@@ -35,13 +35,13 @@ namespace StickBot.Migrations.SqliteMigrations
                     b.Property<ulong>("ServerId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<float>("StealBonkChance")
+                    b.Property<double>("StealBonkChance")
                         .HasColumnType("REAL");
 
                     b.Property<long>("StealCooldown")
                         .HasColumnType("INTEGER");
 
-                    b.Property<float>("StealSuccessChance")
+                    b.Property<double>("StealSuccessChance")
                         .HasColumnType("REAL");
 
                     b.Property<ulong>("StickRole")

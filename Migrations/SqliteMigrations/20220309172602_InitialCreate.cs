@@ -18,8 +18,8 @@ namespace StickBot.Migrations.SqliteMigrations
                     ServerId = table.Column<ulong>(type: "INTEGER", nullable: false),
                     BonkMin = table.Column<long>(type: "INTEGER", nullable: false),
                     BonkMax = table.Column<long>(type: "INTEGER", nullable: false),
-                    StealSuccessChance = table.Column<float>(type: "REAL", nullable: false),
-                    StealBonkChance = table.Column<float>(type: "REAL", nullable: false),
+                    StealSuccessChance = table.Column<double>(type: "REAL", nullable: false),
+                    StealBonkChance = table.Column<double>(type: "REAL", nullable: false),
                     StealCooldown = table.Column<long>(type: "INTEGER", nullable: false),
                     StickRole = table.Column<ulong>(type: "INTEGER", nullable: false),
                     BonkedRole = table.Column<ulong>(type: "INTEGER", nullable: false)

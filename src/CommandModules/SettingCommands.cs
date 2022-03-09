@@ -5,7 +5,7 @@ namespace StickBot.CommandModules;
 
 using DSharpPlus.SlashCommands;
 
-public class ConfigCommands : SlashCommandModule
+public class SettingCommands : SlashCommandModule
 {
     
 }
