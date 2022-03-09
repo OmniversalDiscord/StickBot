@@ -5,7 +5,7 @@ namespace StickBot.Services;
 
 public class SettingsService
 {
-    private BotDbContext _dbContext;
+    private readonly BotDbContext _dbContext;
     
     public SettingsService(BotDbContext dbContext)
     {

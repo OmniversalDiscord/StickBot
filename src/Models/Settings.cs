@@ -1,5 +1,6 @@
 ﻿namespace StickBot.Models;
 
+// TODO: Bonk length
 public enum Setting
 {
     BonkMin,
