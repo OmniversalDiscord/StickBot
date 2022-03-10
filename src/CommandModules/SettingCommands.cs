@@ -33,7 +33,61 @@ public class SettingCommands : SlashCommandModule
             return null;
         }
     }
-    
+
+    private static string GetRolesPage(Settings settings, DiscordGuild guild)
+    {
+        var page = new StringBuilder();
+        if (guild.Roles.TryGetValue(settings.StickRole, out var stickRole))
+        {
+            page.AppendLine($"**Stick**: {stickRole.Mention}");
+        }
+        else
+        {
+            page.AppendLine("**Stick**: :warning: **None set!**");
+        }
+        page.AppendLine("Set with ``/set role stick <role>``\n");
+        
+        if (guild.Roles.TryGetValue(settings.BonkedRole, out var bonkedRole))
+        {
+            page.AppendLine($"**Bonk**: {bonkedRole.Mention}");
+        }
+        else
+        {
+            page.AppendLine("**Bonk**: :warning: **None set!**");
+        }
+        page.AppendLine("Set with ``/set role bonked <role>``\n");
+
+        return page.ToString();
+    }
+
+    private static string GetBonksPage(Settings settings)
+    {
+        var page = new StringBuilder();
+        var bonkMin = TimeSpan.FromMilliseconds(settings.BonkMin);
+        var bonkMax = TimeSpan.FromMilliseconds(settings.BonkMax);
+        
+        page.AppendLine($"**Minimum time until bonk:** {bonkMin.Humanize(3)}");
+        page.AppendLine("Set with ``/set bonkmin <time>``\n");
+        page.AppendLine($"**Maximum time until bonk:** {bonkMax.Humanize(3)}");
+        page.AppendLine("Set with ``/set bonkmax <time>``\n");
+        return page.ToString();
+    }
+
+    private static string GetStealingPage(Settings settings)
+    {
+        var page = new StringBuilder();
+        var stealCooldown = TimeSpan.FromMilliseconds(settings.StealCooldown);
+        
+        page.AppendLine($"**Chance to steal a stick:** {settings.StealSuccessChance * 100}%");
+        page.AppendLine("Set with ``/set stealchance success <chance>``\n");
+        page.AppendLine($"**Chance to be bonked by stick:** {settings.StealBonkChance * 100}%");
+        page.AppendLine("Set with ``/set stealchance bonk <chance>``\n");
+        page.AppendLine($"**Cooldown between steals:** {stealCooldown.Humanize(3)}");
+        page.AppendLine("Set with ``/set stealcooldown <time>``\n");
+        
+        return page.ToString();
+    }
+
     [SlashCommand("settings", "List all settings for StickBot")]
     public async Task ListSettings(InteractionContext ctx)
     {
@@ -42,49 +96,17 @@ public class SettingCommands : SlashCommandModule
         if (settings == null)
             return;
 
-        var settingsList = new StringBuilder();
-        var bonkMin = TimeSpan.FromMilliseconds(settings.BonkMin);
-        var bonkMax = TimeSpan.FromMilliseconds(settings.BonkMax);
-        var stealCooldown = TimeSpan.FromMilliseconds(settings.StealCooldown);
-
-        settingsList.AppendLine("*Roles*\n");
-        if (ctx.Guild.Roles.TryGetValue(settings.StickRole, out var stickRole))
-        {
-            settingsList.AppendLine($"**Stick**: {stickRole.Mention}");
-        }
-        else
-        {
-            settingsList.AppendLine("**Stick**: :warning: **None set!**");
-        }
-        settingsList.AppendLine("Set with ``/set role stick``\n");
+        var page = new StringBuilder();
+        page.AppendLine(":brown_circle: **Roles**");
+        page.AppendLine(GetRolesPage(settings, ctx.Guild));
+        page.AppendLine(":anger: **Bonks**");
+        page.AppendLine(GetBonksPage(settings));
+        page.AppendLine(":moneybag: **Stick stealing**");
+        page.AppendLine(GetStealingPage(settings));
         
-        if (ctx.Guild.Roles.TryGetValue(settings.BonkedRole, out var bonkedRole))
-        {
-            settingsList.AppendLine($"**Bonk**: {bonkedRole.Mention}");
-        }
-        else
-        {
-            settingsList.AppendLine("**Bonk**: :warning: **None set!**");
-        }
-        settingsList.AppendLine("Set with ``/set role bonked``\n");
-        settingsList.AppendLine("*Bonks*\n");
-        settingsList.AppendLine($"**Minimum time until bonk:** {bonkMin.Humanize(3)}");
-        settingsList.AppendLine("Set with ``/set bonkmin <time>``\n");
-        settingsList.AppendLine($"**Maximum time until bonk:** {bonkMax.Humanize(3)}");
-        settingsList.AppendLine("Set with ``/set bonkmax <time>``\n");
-        settingsList.AppendLine("*Stealing*\n");
-        settingsList.AppendLine($"**Chance to steal a stick:** {settings.StealSuccessChance * 100}%");
-        settingsList.AppendLine("Set with ``/set stealchance success <chance>``\n");
-        settingsList.AppendLine($"**Chance to be bonked by stick:** {settings.StealBonkChance * 100}%");
-        settingsList.AppendLine("Set with ``/set stealchance bonk <chance>``\n");
-        settingsList.AppendLine($"**Cooldown between steals:** {stealCooldown.Humanize(3)}");
-        settingsList.AppendLine("Set with ``/set stealcooldown <time>``\n");
-
-        var embed = new DiscordEmbedBuilder()
-            .WithTitle("StickBot Settings")
-            .WithDescription(settingsList.ToString())
-            .Build();
+        var embed = new DiscordEmbedBuilder().WithTitle("StickBot Settings").WithDescription(page.ToString());
         
-        await ctx.CreateResponseAsync(InteractionResponseType.ChannelMessageWithSource, new DiscordInteractionResponseBuilder().AddEmbed(embed));
+        await ctx.CreateResponseAsync(InteractionResponseType.ChannelMessageWithSource,
+            new DiscordInteractionResponseBuilder().AddEmbed(embed.Build()));
     }
 }
